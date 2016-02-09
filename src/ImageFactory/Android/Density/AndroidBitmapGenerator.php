@@ -104,6 +104,8 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 			$this->imagePath = $path;
 		}
 		
+		$this->setReferenceSizes(-1, -1);
+		
 		return $this;
 	}	
 	
