@@ -45,13 +45,21 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	/**
      * @var integer
      */
-	protected $compressionValue = self::COMPRESSION_PNG_DEFAULT_LEVEL;	
+	protected $compressionValue = self::COMPRESSION_PNG_DEFAULT_LEVEL;
+	
+	/**
+	 * @var string
+	 */	
+	protected $bitmapType = self::BITMAP_TYPE_REGULAR;
 	
 	const DENSITY_MDPI    = 'mdpi';
 	const DENSITY_HPI     = 'hdpi';
 	const DENSITY_XHDPI   = 'xhdpi';
 	const DENSITY_XXHDPI  = 'xxhdpi';
 	const DENSITY_XXXHDPI = 'xxxhdpi';
+	
+	const BITMAP_TYPE_ICON_LAUNCHER = 'ICON_LAUNCHER_BITMAP';
+	const BITMAP_TYPE_REGULAR = 'REGULAR_BITMAP';
 	
 	/**
      * Constructor.
@@ -66,7 +74,7 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 		$this->imagine = new \Imagine\Imagick\Imagine();	
 		$this->setImagePath($imagePath); 
 		$this->setOutputPath($outputPath); 
-		$this->setReferenceSizes($referenceWidth, $referenceHeight);	
+		$this->setReferenceSize($referenceWidth, $referenceHeight);	
 	}
 	
 	/**
@@ -104,10 +112,32 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 			$this->imagePath = $path;
 		}
 		
-		$this->setReferenceSizes(-1, -1);
+		$this->setReferenceSize(-1, -1);
 		
 		return $this;
 	}	
+	
+	/**
+	 * Set the image type 
+	 *
+	 * @param string $type 
+	 * 
+	 * @return AndroidBitmapGenerator
+	 */
+	public function setBitmapType($type)
+	{
+	    if (!in_array($type, array(self::BITMAP_TYPE_REGULAR, self::BITMAP_TYPE_ICON_LAUNCHER))) {
+	        throw new InvalidBitmapTypeException(
+	            'A valid bitmap type must be defined, either '.self::BITMAP_TYPE_REGULAR.' or '.self::BITMAP_TYPE_ICON_LAUNCHER
+	        );
+	    }
+	    
+        $this->bitmapType = $type;
+        
+        return $this;
+	}
+	 
+	 
 	
 	/**
      * Set output path used to name each density file 
@@ -126,16 +156,16 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	}	
 	
 	/**
-     * Set the reference sizes necessary for defining the sizes of each density
+     * Set the reference size necessary for defining the size of each density image
      *
      * @param integer $width
      * @param integer $height
      *
      * @return AndroidBitmapGenerator
      */
-	public function setReferenceSizes($width, $height)
+	public function setReferenceSize($width, $height)
 	{
-		if (0 < (int) $width && (int) $height > 0) {
+		if (4 < (int) $width && (int) $height > 4) {
 			$this->referenceWidth = $width;
 			$this->referenceHeight = $height;
 		} else {
@@ -150,7 +180,7 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	}
 	
 	/**
-     * Set the sizes of each density based on the reference sizes 
+     * Set the sizes of each density based on the reference size 
      */
 	protected function setDensities()
 	{
@@ -180,6 +210,10 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 			$this->imagine->open($this->imagePath)
 			     ->resize(new \Imagine\Image\Box($size[0], $size[1]), \Imagine\Image\ImageInterface::FILTER_POINT)
 			     ->save($path.'-'.$dens.'.'.$ext,  array($this->compressionType => $this->compressionValue));
+		    
+		    if (self::BITMAP_TYPE_REGULAR == $this->bitmapType && $dens == self::DENSITY_XXHDPI) { 
+		        break; 
+	        }
 		}
 	}
 }

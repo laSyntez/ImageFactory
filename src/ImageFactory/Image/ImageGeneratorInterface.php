@@ -40,14 +40,14 @@ interface ImageGeneratorInterface
 	public function setOutputPath($path);
 	
 	/**
-     * Set the reference sizes necessary for defining the sizes of each density
+     * Set the reference size necessary for defining the sizes of each density
      *
      * @param integer $width
      * @param integer $height
      *
      * @return AndroidBitmapGenerator
      */
-	public function setReferenceSizes($width, $height);
+	public function setReferenceSize($width, $height);
 	
 
 	/**
