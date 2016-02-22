@@ -174,8 +174,8 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	{
 	    $width = (int) $width;
 	    
-	    if (self::E=REFERENCE_WIDTH_UNDEFINED < $width && $width < self::REFERENCE_WIDTH_MINIMUM) {
-	        throw new InvalidReferenceSizeException('The width must be greater than '.self::REFERENCE_WIDTH_MINIMUM);
+	    if (self::REFERENCE_WIDTH_UNDEFINED < $width && $width < self::REFERENCE_WIDTH_MINIMUM) {
+	        throw new InvalidReferenceSizeException('The width must be greater than or equal to '.self::REFERENCE_WIDTH_MINIMUM);
 	    }
 	    
 	    if (self::REFERENCE_WIDTH_MINIMUM <= $width) {
@@ -194,15 +194,15 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	 *
 	 * @return AndroidBitmapGenerator
 	 */
-	public function setReferenceWidth($height)
+	public function setReferenceHeight($height)
 	{
 	    $height = (int) $height;
 	    
-	    if (self::REFERENCE_HEIGHT_UNDEFINED < $width && $width < self::REFERENCE_HEIGHT_MINIMUM) {
-	        throw new InvalidReferenceSizeException('The height must be greater than '.self::REFERENCE_HEIGHT_MINIMUM);
+	    if (self::REFERENCE_HEIGHT_UNDEFINED < $height && $height < self::REFERENCE_HEIGHT_MINIMUM) {
+	        throw new InvalidReferenceSizeException('The height must be greater than or equal to '.self::REFERENCE_HEIGHT_MINIMUM);
 	    }
 	    
-	    if (self::REFERENCE_HEIGHT_MINIMUM <= $width) {
+	    if (self::REFERENCE_HEIGHT_MINIMUM <= $height) {
 	        $this->referenceHeight = $height;
 	    } else {
 	        $this->referenceHeight = self::REFERENCE_HEIGHT_UNDEFINED;
