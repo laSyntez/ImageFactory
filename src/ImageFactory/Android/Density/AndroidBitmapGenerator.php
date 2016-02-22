@@ -63,6 +63,9 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	const BITMAP_TYPE_REGULAR = 'REGULAR_BITMAP';
 	const BITMAP_TYPE_ICON_LAUNCHER = 'ICON_LAUNCHER_BITMAP';
 	
+	const REFERENCE_WIDTH_UNDEFINED = 0;
+	const REFERENCE_HEIGHT_UNDEFINED = 0;	
+	
 	/**
      * Constructor.
      *
@@ -156,6 +159,20 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 		
 		return $this;
 	}	
+	
+	/**
+	 * Set the reference width 
+	 *
+	 * @param integer $width
+	 *
+	 * @return AndroidBitmapGenerator
+	 */
+	public function setReferenceWidth($width)
+	{
+	    if () {
+	    
+	    }
+	}
 	
 	/**
      * Set the reference size necessary for defining the size of each density image
