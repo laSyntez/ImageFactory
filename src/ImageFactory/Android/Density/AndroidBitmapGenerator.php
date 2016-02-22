@@ -4,6 +4,7 @@ namespace ImageFactory\Android\Density;
 
 use ImageFactory\Image\ImageGeneratorInterface;
 use ImageFactory\Exception\InvalidCompressionTypeException;
+use ImageFactory\Android\Exception\InvalidBitmapTypeException;
 
 class AndroidBitmapGenerator implements ImageGeneratorInterface
 {
@@ -38,6 +39,11 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	protected $densities = array();	
 	
 	/**
+	 * @var string
+	 */	
+	protected $bitmapType = self::BITMAP_TYPE_REGULAR;
+
+	/**
      * @var string
      */
 	protected $compressionType = self::COMPRESSION_PNG;	
@@ -47,10 +53,6 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
      */
 	protected $compressionValue = self::COMPRESSION_PNG_DEFAULT_LEVEL;
 	
-	/**
-	 * @var string
-	 */	
-	protected $bitmapType = self::BITMAP_TYPE_REGULAR;
 	
 	const DENSITY_MDPI    = 'mdpi';
 	const DENSITY_HPI     = 'hdpi';
@@ -58,8 +60,8 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	const DENSITY_XXHDPI  = 'xxhdpi';
 	const DENSITY_XXXHDPI = 'xxxhdpi';
 	
-	const BITMAP_TYPE_ICON_LAUNCHER = 'ICON_LAUNCHER_BITMAP';
 	const BITMAP_TYPE_REGULAR = 'REGULAR_BITMAP';
+	const BITMAP_TYPE_ICON_LAUNCHER = 'ICON_LAUNCHER_BITMAP';
 	
 	/**
      * Constructor.
@@ -90,8 +92,8 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	public function setCompression($type, $value)	
 	{
 		if (in_array($type, array(self::COMPRESSION_PNG, self::COMPRESSION_JPEG))) {
-			$this-> compressionType = $type;			
-			$this-> compressionValue = (int) $value;
+			$this->compressionType = $type;			
+			$this->compressionValue = (int) $value;
 		} else {
 			throw new InvalidCompressionTypeException('A valid compression type must be defined');
 		}
