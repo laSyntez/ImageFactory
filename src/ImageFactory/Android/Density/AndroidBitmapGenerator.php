@@ -63,6 +63,8 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	const BITMAP_TYPE_REGULAR = 'REGULAR_BITMAP';
 	const BITMAP_TYPE_ICON_LAUNCHER = 'ICON_LAUNCHER_BITMAP';
 	
+	const REFERENCE_WIDTH_MINIMUM = 4;
+	const REFERENCE_HEIGHT_MINIMUM = 4;		
 	const REFERENCE_WIDTH_UNDEFINED = 0;
 	const REFERENCE_HEIGHT_UNDEFINED = 0;	
 	
