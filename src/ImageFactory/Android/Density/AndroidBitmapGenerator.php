@@ -5,6 +5,7 @@ namespace ImageFactory\Android\Density;
 use ImageFactory\Image\ImageGeneratorInterface;
 use ImageFactory\Exception\InvalidCompressionTypeException;
 use ImageFactory\Android\Exception\InvalidBitmapTypeException;
+use ImageFactory\Android\Exception\InvalidReferenceSizeException;
 
 class AndroidBitmapGenerator implements ImageGeneratorInterface
 {
@@ -26,12 +27,12 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	/**
      * @var integer
      */
-	protected $referenceWidth;	
+	protected $referenceWidth = self::REFERENCE_WIDTH_UNDEFINED;	
 	
 	/**
      * @var integer
      */
-	protected $referenceHeight;
+	protected $referenceHeight = self::REFERENCE_HEIGHT_UNDEFINED;
 	
 	/**
      * @var array
@@ -76,7 +77,7 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
      * @param integer $referenceWidth
      * @param integer $referenceHeight
      */
-	public function __construct($imagePath, $outputPath = null, $referenceWidth = -1, $referenceHeight = -1) 
+	public function __construct($imagePath, $outputPath = null, $referenceWidth = self::REFERENCE_WIDTH_UNDEFINED, $referenceHeight = self::REFERENCE_HEIGHT_UNDEFINED) 
 	{
 		$this->imagine = new \Imagine\Imagick\Imagine();	
 		$this->setImagePath($imagePath); 
@@ -171,9 +172,43 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	 */
 	public function setReferenceWidth($width)
 	{
-	    if () {
+	    $width = (int) $width;
 	    
+	    if (self::E=REFERENCE_WIDTH_UNDEFINED < $width && $width < self::REFERENCE_WIDTH_MINIMUM) {
+	        throw new InvalidReferenceSizeException('The width must be greater than '.self::REFERENCE_WIDTH_MINIMUM);
 	    }
+	    
+	    if (self::REFERENCE_WIDTH_MINIMUM <= $width) {
+	        $this->referenceWidth = $width;
+	    } else {
+	        $this->referenceWidth = self::REFERENCE_WIDTH_UNDEFINED;
+	    }
+	    
+	    return $this;
+	}
+	
+	/**
+	 * Set the reference height 
+	 *
+	 * @param integer $height
+	 *
+	 * @return AndroidBitmapGenerator
+	 */
+	public function setReferenceWidth($height)
+	{
+	    $height = (int) $height;
+	    
+	    if (self::REFERENCE_HEIGHT_UNDEFINED < $width && $width < self::REFERENCE_HEIGHT_MINIMUM) {
+	        throw new InvalidReferenceSizeException('The height must be greater than '.self::REFERENCE_HEIGHT_MINIMUM);
+	    }
+	    
+	    if (self::REFERENCE_HEIGHT_MINIMUM <= $width) {
+	        $this->referenceHeight = $height;
+	    } else {
+	        $this->referenceHeight = self::REFERENCE_HEIGHT_UNDEFINED;
+	    }
+	    
+	    return $this;
 	}
 	
 	/**
@@ -186,16 +221,8 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
      */
 	public function setReferenceSize($width, $height)
 	{
-		if (4 < (int) $width && (int) $height > 4) {
-			$this->referenceWidth = $width;
-			$this->referenceHeight = $height;
-		} else {
-			$size = $this->imagine->open($this->imagePath)->getSize();
-			$this->referenceWidth = $size->getWidth();			
-			$this->referenceHeight = $size->getHeight();
-		}	
-		
-		$this->setDensities();
+		$this->setReferenceWidth($width);
+		$this->setReferenceHeight($height);
 		
 		return $this;
 	}
@@ -205,6 +232,20 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
      */
 	protected function setDensities()
 	{
+		$size = $this->imagine->open($this->imagePath)->getSize();
+        $width = $size->getWidth();		
+        $height = $size->getHeight();		
+        $ratio = $width/$height;
+        
+	    if ($this->referenceWidth == self::REFERENCE_WIDTH_UNDEFINED && self::REFERENCE_HEIGHT_UNDEFINED == $this->referenceHeight) {
+			$this->referenceWidth = $width;			
+			$this->referenceHeight = $height;
+		} elseif (self::REFERENCE_WIDTH_UNDEFINED == $this->referenceWidth) {
+		    $this->referenceWidth = $this->referenceHeight*$ratio;
+		} elseif (self::REFERENCE_HEIGHT_UNDEFINED == $this->referenceHeight) {
+		    $this->referenceHeight = $this->referenceWidth/$ratio;
+        }		
+		
 		$this->densities = array(
 			self::DENSITY_MDPI => array($this->referenceWidth/4, $this->referenceHeight/4),
 			self::DENSITY_HPI => array($this->referenceWidth*3/8, $this->referenceHeight*3/8),
@@ -226,6 +267,8 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 		$dotPos = stripos($outputPath, '.');
 		$path = substr($outputPath, 0, $dotPos);
 		$ext = substr($outputPath, $dotPos+1);
+		
+		$this->setDensities();
 		
 		foreach ($this->densities as $dens => $size) {
 			$this->imagine->open($this->imagePath)
