@@ -3,6 +3,7 @@
 namespace ImageFactory\Android\Density;
 
 use ImageFactory\Image\ImageGeneratorInterface;
+use ImageFactory\Exception\InvalidDriverException;
 use ImageFactory\Exception\InvalidCompressionTypeException;
 use ImageFactory\Android\Exception\InvalidBitmapTypeException;
 use ImageFactory\Android\Exception\InvalidReferenceSizeException;
@@ -69,6 +70,7 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	const REFERENCE_WIDTH_UNDEFINED = 0;
 	const REFERENCE_HEIGHT_UNDEFINED = 0;	
 	
+	
 	/**
      * Constructor.
      *
@@ -78,8 +80,8 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
      * @param integer $referenceHeight
      */
 	public function __construct($imagePath, $outputPath = null, $referenceWidth = self::REFERENCE_WIDTH_UNDEFINED, $referenceHeight = self::REFERENCE_HEIGHT_UNDEFINED) 
-	{
-		$this->imagine = new \Imagine\Imagick\Imagine();	
+	{	
+		$this->setDriver(self::DRIVER_GD);	
 		$this->setImagePath($imagePath); 
 		$this->setOutputPath($outputPath); 
 		$this->setReferenceSize($referenceWidth, $referenceHeight);	
@@ -148,7 +150,7 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	 
 	
 	/**
-     * Set output path used to name each density file 
+     * Set the output path used to name each density file 
      *
      * @param string $path
      *
@@ -256,6 +258,31 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	}
 	
 	/**
+	 * Set the driver used by the Imagine library to generate the bitmaps
+	 *
+	 * @param string $driver
+	 *
+	 * @return AndroidBitmapGenerator
+	 */
+	public function setDriver($driver)
+	{
+	    if (!in_array($driver, array(self::DRIVER_GD, self::DRIVER_IMAGICK))) {
+	        throw new InvalidDriverException('A valid driver must be defined, either '.self::DRIVER_GD.' or '.self::DRIVER_IMAGICK);
+	    }
+	    
+	    switch ($driver) {
+	        case self::DRIVER_GD: 
+	            $this->imagine = new \Imagine\Gd\Imagine();
+	            break;
+	        case self::DRIVER_IMAGICK: 
+	            $this->imagine = new \Imagine\Imagick\Imagine();	
+	            break;
+	    }
+	    
+	    return $this;
+	}
+	
+	/**
      * Generate the different densities files
      *
      * @param string $compressionType
@@ -270,9 +297,13 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 		
 		$this->setDensities();
 		
+		$filter = $this->imagine instanceof \Imagine\Imagick\Imagine 
+		    ? \Imagine\Image\ImageInterface::FILTER_POINT 
+		    : \Imagine\Image\ImageInterface::FILTER_UNDEFINED;
+		    
 		foreach ($this->densities as $dens => $size) {
 			$this->imagine->open($this->imagePath)
-			     ->resize(new \Imagine\Image\Box($size[0], $size[1]), \Imagine\Image\ImageInterface::FILTER_POINT)
+			     ->resize(new \Imagine\Image\Box($size[0], $size[1]), $filter)
 			     ->save($path.'-'.$dens.'.'.$ext,  array($this->compressionType => $this->compressionValue));
 		    
 		    if (self::BITMAP_TYPE_REGULAR == $this->bitmapType && $dens == self::DENSITY_XXHDPI) { 

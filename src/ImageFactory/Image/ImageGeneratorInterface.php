@@ -4,10 +4,14 @@ namespace ImageFactory\Image;
 
 interface ImageGeneratorInterface 
 {	
+	const DRIVER_GD = 'GD';
+	const DRIVER_IMAGICK = 'Imagick';
+	
 	const COMPRESSION_PNG  = 'png_compression_level';
 	const COMPRESSION_JPEG = 'jpeg_quality';
 	const COMPRESSION_PNG_DEFAULT_LEVEL  = 7;
 	const COMPRESSION_JPEG_DEFAULT_LEVEL = 75;
+	
 	
 	/**
      * Set the compression type and value
