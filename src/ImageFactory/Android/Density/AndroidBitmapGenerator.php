@@ -57,7 +57,7 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	
 	
 	const DENSITY_MDPI    = 'mdpi';
-	const DENSITY_HPI     = 'hdpi';
+	const DENSITY_HDPI    = 'hdpi';
 	const DENSITY_XHDPI   = 'xhdpi';
 	const DENSITY_XXHDPI  = 'xxhdpi';
 	const DENSITY_XXXHDPI = 'xxxhdpi';
@@ -120,9 +120,8 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 	{
 		if (is_string($path)) {
 			$this->imagePath = $path;
-		}
-		
-		$this->setReferenceSize(-1, -1);
+		    $this->setReferenceSize(self::REFERENCE_WIDTH_UNDEFINED, self::REFERENCE_HEIGHT_UNDEFINED);
+		}		
 		
 		return $this;
 	}	
@@ -248,13 +247,18 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 		    $this->referenceHeight = $this->referenceWidth/$ratio;
         }		
 		
-		$this->densities = array(
-			self::DENSITY_MDPI => array($this->referenceWidth/4, $this->referenceHeight/4),
-			self::DENSITY_HPI => array($this->referenceWidth*3/8, $this->referenceHeight*3/8),
-			self::DENSITY_XHDPI => array($this->referenceWidth/2, $this->referenceHeight/2),
-			self::DENSITY_XXHDPI => array($this->referenceWidth*3/4, $this->referenceHeight*3/4),
-			self::DENSITY_XXXHDPI => array($this->referenceWidth, $this->referenceHeight)
-		);
+		if (self::BITMAP_TYPE_REGULAR == $this->bitmapType) {		
+		    $this->densities[self::DENSITY_MDPI] = array($this->referenceWidth/3, $this->referenceHeight/3);
+		    $this->densities[self::DENSITY_HDPI] = array($this->referenceWidth/2, $this->referenceHeight/2);
+		    $this->densities[self::DENSITY_XHDPI] = array($this->referenceWidth*2/3, $this->referenceHeight*2/3);
+		    $this->densities[self::DENSITY_XXHDPI] = array($this->referenceWidth, $this->referenceHeight);
+		} else {
+		    $this->densities[self::DENSITY_MDPI] = array($this->referenceWidth/4, $this->referenceHeight/4);
+		    $this->densities[self::DENSITY_HDPI] = array($this->referenceWidth*3/8, $this->referenceHeight*3/8);
+		    $this->densities[self::DENSITY_XHDPI] = array($this->referenceWidth/2, $this->referenceHeight/2);
+		    $this->densities[self::DENSITY_XXHDPI] = array($this->referenceWidth*3/4, $this->referenceHeight*3/4);
+		    $this->densities[self::DENSITY_XXXHDPI] = array($this->referenceWidth, $this->referenceHeight);
+		}
 	}
 	
 	/**
@@ -305,10 +309,6 @@ class AndroidBitmapGenerator implements ImageGeneratorInterface
 			$this->imagine->open($this->imagePath)
 			     ->resize(new \Imagine\Image\Box($size[0], $size[1]), $filter)
 			     ->save($path.'-'.$dens.'.'.$ext,  array($this->compressionType => $this->compressionValue));
-		    
-		    if (self::BITMAP_TYPE_REGULAR == $this->bitmapType && $dens == self::DENSITY_XXHDPI) { 
-		        break; 
-	        }
 		}
 	}
 }

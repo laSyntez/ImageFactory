@@ -9,13 +9,10 @@ Based on the [Imagine](https://github.com/avalanche123/Imagine) library, ImageFa
 
 ### Installation
 
-```
-composer require 
-```
 
 ### Basic usage
 
-AndroidBitmapGenerator is the wrapper that allows Android developers to generate bitmaps of every density (mdpi - hdpi - xhdpi - xxhdpi - xxxhdpi) on the fly just by providing the original image path.
+AndroidBitmapGenerator is the wrapper that allows Android developers to generate bitmaps of every density (mdpi - hdpi - xhdpi - xxhdpi - xxxhdpi) on the fly just by providing the original image path. Two drivers are supported GD (by default) and Imagick. The Imagick driver seems to be more efficient when the output format is png but multiple combinations are possible to optimize the output.
 
 ```php
 <?php
@@ -26,6 +23,9 @@ use ImageFactory\Android\Density\AndroidBitmapGenerator;
 
 $generator = new AndroidBitmapGenerator('images/neptune.jpg');
 $generator->execute();
+
+/* CHANGE THE DRIVER IF NEEDED */
+$generator->setDriver(ImageGeneratorInterface::DRIVER_IMAGICK)->execute();
 ```
 
 This is as simple as that, the files will be generated in the same directory as the source image with the same name suffixed with the relative density. (e.g. neptune-mdpi.jpg).
@@ -45,8 +45,20 @@ $generator->execute();
 
 ```
 
+According to the [documentation](http://developer.android.com/guide/practices/screens_support.html#xxxhdpi-note), bitmaps for xxxhdpi should only be generated for launcher icons otherwise the highest density should be xxhdpi for regular bitmaps. By default the bitmap type is set to regular in order to generate 4 files instead of 5 for a launcher icon.
 
-The reference size (px width*height) which refers to the highest density can be set either via the constructor as the third and fourth arguments or by calling the appropriate setter. Otherwise it will be equivalent to the original image size by default.
+```php
+<?php
+
+use ImageFactory\Android\Density\AndroidBitmapGenerator;
+
+$generator->setBitmapType(AndroidBitmapGenerator::BITMAP_TYPE_ICON_LAUNCHER);
+        //->setBitmapType(AndroidBitmapGenerator::BITMAP_TYPE_REGULAR); (default)
+
+
+```
+
+The reference size which refers to the highest density can be set either via the constructor or by calling the appropriate setters. Otherwise it will be equivalent to the original image size by default.
 ```php
 <?php
 
@@ -56,12 +68,14 @@ $generator->execute();
 /* OR */
 
 $generator = new AndroidBitmapGenerator('images/neptune.jpg');
-$generator->setReferenceSize(400, 300)
+$generator->setReferenceWidth(400)
+          ->setReferenceHeight(300)
+          //->setReferenceSize(400, 300)
 		  ->execute();
 ```
 
 
-To change the reference size when a new source image is set, make sure to call *setReferenceSize* after *setImagePath* (which calls it internally) so that the default size can be overriden).
+To define a new reference size when the source image has changed, make sure to call *setReferenceSize* (or *setReferenceWidth* and/or *setReferenceHeight*) after *setImagePath* to override the previous one.
 
 ```php
 <?php
@@ -69,6 +83,8 @@ To change the reference size when a new source image is set, make sure to call *
 $generator = new AndroidBitmapGenerator('images/neptune.jpg');
 $generator->setImagePath(__DIR__.'/images/mars.jpg')
 		  ->setReferenceSize(400, 300)
+          //->setReferenceWidth(400)
+          //->setReferenceHeight(300)
 		  ->execute();
 ```
 
@@ -89,12 +105,12 @@ $generator = new AndroidBitmapGenerator('/images/neptune.jpg');
 	          ->setCompression(ImageGeneratorInterface::COMPRESSION_JPEG, ImageGeneratorInterface::COMPRESSION_JPEG_DEFAULT_LEVEL)
   			  ->execute();
 ```
+
+
 ### Roadmap
 
- * [markdown-it](https://github.com/markdown-it/markdown-it) for Markdown parsing
- * [CodeMirror](http://codemirror.net/) for the awesome syntax-highlighted editor
- * [highlight.js](http://softwaremaniacs.org/soft/highlight/en/) for syntax highlighting in output code blocks
- * [js-deflate](https://github.com/dankogai/js-deflate) for gzipping of data to make it fit in URLs
+ * Gif support
 
-### License
+
+### MIT License
 
