@@ -9,6 +9,10 @@ Based on the [Imagine](https://github.com/avalanche123/Imagine) library, ImageFa
 
 ### Installation
 
+```cli
+ $ composer require lasyntez/image-factory
+```
+
 ### Basic usage
 
 AndroidBitmapGenerator is the wrapper that allows Android developers to generate bitmaps of every density (mdpi - hdpi - xhdpi - xxhdpi - xxxhdpi) on the fly just by providing the original image path. Two drivers are supported GD (by default) and Imagick. The Imagick driver seems to be more efficient when the output format is png but multiple combinations are possible to optimize the output.
