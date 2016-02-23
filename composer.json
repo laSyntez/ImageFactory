@@ -3,6 +3,7 @@
     "description": "Image manipulation in a simple way by using wrappers to handle the Imagine library",
     "keywords": ["image manipulation","android", "density"],
     "license": "MIT",
+    "version": "0.1.0",
     "authors": [
         {
             "name": "laSyntez",
