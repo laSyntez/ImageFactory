@@ -1,0 +1,12 @@
+/vendor/*
+/images/*
+/version/*
+
+
+/*.php
+/composer.lock
+/*~
+/src/ImageFactory/Android/Density/*~
+/src/ImageFactory/Android/Exception/*~
+/src/ImageFactory/Exception/*~
+/src/ImageFactory/Image/*~

@@ -1,0 +1,23 @@
+{
+    "name": "quest/image-factory",
+    "description": "Image manipulation in a simple way by using wrappers to handle the Imagine library",
+    "keywords": ["image manipulation","android", "density"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "laSyntez",
+            "email": "lasyntez@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "imagine/imagine": "0.6.3"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "": "src"
+        }
+    }
+}
