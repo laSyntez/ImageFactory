@@ -1,5 +1,5 @@
 {
-    "name": "quest/image-factory",
+    "name": "lasyntez/image-factory",
     "description": "Image manipulation in a simple way by using wrappers to handle the Imagine library",
     "keywords": ["image manipulation","android", "density"],
     "license": "MIT",
