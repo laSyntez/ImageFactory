@@ -112,8 +112,10 @@ $generator = new AndroidBitmapGenerator('/images/neptune.jpg');
 
 ### Roadmap
 
- * Gif support
+ * Animated gif support
 
 
-### MIT License
+### License
+
+The MIT License (MIT). Please see License [File](./LICENSE.md) for more information.
 
