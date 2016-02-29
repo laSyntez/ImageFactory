@@ -1,5 +1,7 @@
 # ImageFactory
 
+https://img.shields.io/dub/l/vibe-d.svg
+
 Based on the [Imagine](https://github.com/avalanche123/Imagine) library, ImageFactory provides wrappers allowing image manipulation in a simple way.
 
 ### Requirements
