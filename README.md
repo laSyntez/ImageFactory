@@ -119,5 +119,5 @@ $generator = new AndroidBitmapGenerator('/images/neptune.jpg');
 
 ### License
 
-The MIT License (MIT). Please see License [File](./LICENSE.md) for more information.
+[MIT](./LICENSE.md)
 
